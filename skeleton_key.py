@@ -9,11 +9,11 @@ import cocos
 from cocos.director import director
 import pyglet
 
-import menu_scene
+from menu_scene import MenuScene
 
 if __name__ == "__main__":
     pyglet.font.add_directory('resources/fonts')
     director.init(resizable=True, width=768, height=1024, caption='Skeleton Key')
     director.show_FPS = True
-    director.run(menu_scene.MenuScene())
+    director.run(MenuScene())
 

@@ -4,38 +4,38 @@ from cocos.scene import *
 from cocos.layer import *
 from cocos.sprite import *
 from cocos.menu import *
+from cocos.scenes.transitions import FadeTRTransition as Transition
+
+from instructions_scene import InstructionsScene
 
 class MenuSceneMenu(Menu):
     def __init__(self):
         super(MenuSceneMenu, self).__init__()
-        self.position = (0, 0)
+        self.position = (0, -256)
+        self.scale = 3
 
-        play = ImageMenuItem('resources/graphics/menu/menu_play.png', self.on_play)
-        play.scale = 3.0
-        instructions = ImageMenuItem('resources/graphics/menu/menu_instructions.png', self.on_instructions)
-        instructions.scale = 3.0
-        options = ImageMenuItem('resources/graphics/menu/menu_options.png', self.on_options)
-        options.scale = 3.0
-        achievements = ImageMenuItem('resources/graphics/menu/menu_achievements.png', self.on_achievements)
-        achievements.scale = 3.0
+        play_button = ImageMenuItem('resources/graphics/menu/menu_play.png', self.on_play)
+        instructions_button = ImageMenuItem('resources/graphics/menu/menu_instructions.png', self.on_instructions)
+        options_button = ImageMenuItem('resources/graphics/menu/menu_options.png', self.on_options)
+        achievements_button = ImageMenuItem('resources/graphics/menu/menu_achievements.png', self.on_achievements)
 
-        self.create_menu([play, instructions, options, achievements], shake(), shake_back())
+        self.create_menu([play_button, instructions_button, options_button, achievements_button], shake(), shake_back())
+
+    def on_quit(self):
+        return
         
     def on_play(self):
         return
-        # play clicked
     
     def on_instructions(self):
+        director.replace(Transition(InstructionsScene(self.parent), 0.5))
         return
-        # instructions clicked
 
     def on_options(self):
         return
-        # options clicked
 
     def on_achievements(self):
         return
-        # achievements clicked  
 
 class MenuScene(Scene):
     def __init__(self):
@@ -55,5 +55,4 @@ class MenuScene(Scene):
         # menu
         menu = MenuSceneMenu()
         self.add(menu, 1)
-
 
