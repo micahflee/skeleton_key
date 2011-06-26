@@ -4,32 +4,36 @@ from cocos.scene import *
 from cocos.layer import *
 from cocos.sprite import *
 from cocos.menu import *
+from cocos.actions import *
 from cocos.scenes.transitions import FadeTRTransition as Transition
 
 class InstructionsSceneMenu(Menu):
     def __init__(self):
         super(InstructionsSceneMenu, self).__init__()
 
-        back_button = ImageMenuItem('resources/graphics/instructions/instructions_back.png', self.on_back)
-        back_button.scale = 3
-        menu_button = ImageMenuItem('resources/graphics/instructions/instructions_menu.png', self.on_menu)
-        menu_button.scale = 3
-        next_button = ImageMenuItem('resources/graphics/instructions/instructions_next.png', self.on_next)
-        next_button.scale = 3
+        self.back_button = ImageMenuItem('resources/graphics/instructions/instructions_back.png', self.on_back)
+        self.back_button.scale = 3
+        self.menu_button = ImageMenuItem('resources/graphics/instructions/instructions_menu.png', self.on_menu)
+        self.menu_button.scale = 3
+        self.next_button = ImageMenuItem('resources/graphics/instructions/instructions_next.png', self.on_next)
+        self.next_button.scale = 3
 
-        self.create_menu([back_button, menu_button, next_button], shake(), shake_back(), layout_strategy=fixedPositionMenuLayout([(140,60), (384,60), (628,60)]))
+        self.create_menu([self.back_button, self.menu_button, self.next_button], shake(), shake_back(), layout_strategy=fixedPositionMenuLayout([(140,60), (384,60), (628,60)]))
 
     def on_quit(self):
         return
 
     def on_back(self):
+        self.parent.move_back()
+        return
+
+    def on_next(self):
+        self.parent.move_next()
         return
 
     def on_menu(self):
+        print('InstructionsScene menu')
         director.replace(Transition(self.parent.return_scene, 0.5))
-
-    def on_next(self):
-        return
 
 class InstructionsScene(Scene):
     def __init__(self, return_scene):
@@ -48,8 +52,8 @@ class InstructionsScene(Scene):
         self.add(header, 1)
         
         # menu
-        menu = InstructionsSceneMenu()
-        self.add(menu, 1)
+        self.menu = InstructionsSceneMenu()
+        self.add(self.menu, 1)
 
         # the page
         self.page_number = 1
@@ -67,4 +71,26 @@ class InstructionsScene(Scene):
         self.page_layer.add(page2)
         self.page_layer.add(page3)
         self.page_layer.add(page4)
+
+    def move_back(self):
+        print('InstructionsScene back')
+        if(self.page_number > 1):
+            self.page_number -= 1
+            if(self.page_number == 1):
+                self.menu.back_button.opacity = 64
+            self.menu.next_button.opacity = 255
+        self.scroll()
+
+    def move_next(self):
+        print('InstructionsScene next')
+        if(self.page_number < 4):
+            self.page_number += 1
+            if(self.page_number == 4):
+                self.menu.next_button.opacity = 64
+            self.menu.back_button.opacity = 255
+        self.scroll()
+
+    def scroll(self):
+        x = (self.page_number-1) * -768
+        self.page_layer.do( MoveTo((x, 0), 0.2) )
 
